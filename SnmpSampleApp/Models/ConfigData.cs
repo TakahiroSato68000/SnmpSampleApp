@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lextm.SharpSnmpLib.Security;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -17,6 +18,9 @@ namespace SnmpSampleApp
             "SnmpSampleApp");
         private static readonly string SettingsFilePath = Path.Combine(AppDataFolder, "data.xml");
         private object _lock = new object();
+
+        private const string DefaultIpAddress = "127.0.0.1";
+        private const string DefaultCommand = "1.3";
 
         public static ConfigData Instance
         {
@@ -37,8 +41,8 @@ namespace SnmpSampleApp
 
         private void SetDefaultData()
         {
-            IpAddressList = new List<string> { "127.0.0.1" };
-            CommandList = new List<string> { "1.3" };
+            IpAddressList = new List<string> { DefaultIpAddress };
+            CommandList = new List<string> { DefaultCommand };
         }
 
         public void LoadData()
@@ -52,9 +56,9 @@ namespace SnmpSampleApp
                         using (var stream = new FileStream(SettingsFilePath, FileMode.Open))
                         {
                             var serializer = new XmlSerializer(typeof(ConfigData));
-                            var data = (ConfigData)serializer.Deserialize(stream);
-                            IpAddressList = data.IpAddressList;
-                            CommandList = data.CommandList;
+                            var data = serializer.Deserialize(stream) as ConfigData;
+                            IpAddressList = data?.IpAddressList ?? new List<string> { DefaultIpAddress };
+                            CommandList = data?.CommandList ?? new List<string> { DefaultCommand };
                         }
                     }
                     catch

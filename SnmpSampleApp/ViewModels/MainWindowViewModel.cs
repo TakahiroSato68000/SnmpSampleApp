@@ -56,7 +56,7 @@ namespace SnmpSampleApp
             GetSnmpDataCommand = new RelayCommand(ExecuteGetSnmpData);
         }
 
-        private async void ExecuteGetSnmpData(object parameter)
+        private async void ExecuteGetSnmpData(object? parameter)
         {
             try
             {
