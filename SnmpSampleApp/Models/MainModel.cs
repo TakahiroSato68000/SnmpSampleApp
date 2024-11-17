@@ -33,18 +33,34 @@ namespace SnmpSampleApp
             return snmpModel;
         }
 
-        public string GetSnmpData(string ipAddress, string community, string command)
+
+
+        public string? GetSnmpData(string ipAddress, string community, string command)
         {
-            string data = string.Empty;
             var snmpModel = ConnectSnmpData(ipAddress, community);
             LogData.AddLogEntry(string.Format("Request: command='{0}'", command));
-            data = snmpModel?.GetSnmpData(command);
-            LogData.AddLogEntry(string.Format("Recieve : '{0}'", data));
+            var data = snmpModel?.GetSnmpData(command);
+            LogData.AddLogEntry($"Recieve : '{data?.ResponseData ?? "null"}'");
 
             ConfigData.AddToListIfNotExists(ConfigData.IpAddressList, ipAddress);
             ConfigData.AddToListIfNotExists(ConfigData.CommandList, command);
             ConfigData.SaveData();
-            return data;
+            return data?.ResponseData;
+        }
+
+        internal void GetSnmpWalk(string ipAddress, string community, string selectedCommand)
+        {
+            var snmpModel = ConnectSnmpData(ipAddress, community);
+            LogData.AddLogEntry(string.Format("Request: command='{0}'", selectedCommand));
+            var dataList = snmpModel.GetSnmpWalk(selectedCommand);
+            foreach (var data in dataList)
+            {
+                LogData.AddLogEntry($"Recieve : {data?.Command}  '{data?.ResponseData ?? "null"}'");
+            }
+
+            ConfigData.AddToListIfNotExists(ConfigData.IpAddressList, ipAddress);
+            ConfigData.AddToListIfNotExists(ConfigData.CommandList, selectedCommand);
+            ConfigData.SaveData();
         }
     }
 }
