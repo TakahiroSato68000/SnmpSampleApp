@@ -25,6 +25,7 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="150" />
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
                 <Label Content="IP Address" VerticalAlignment="Center" Grid.Column="0" />
@@ -43,6 +44,9 @@
                 <Button Content="Get" Width="75" Margin="10,0,0,0" VerticalAlignment="Center" 
                         Command="{Binding GetSnmpDataCommand}" 
                         Grid.Column="4" />
+                <Button Content="Walk" Width="75" Margin="10,0,0,0" VerticalAlignment="Center" 
+                        Command="{Binding GetSnmpWalk}" 
+                        Grid.Column="5" />
             </Grid>
         </GroupBox>
 

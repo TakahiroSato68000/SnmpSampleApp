@@ -15,11 +15,6 @@ namespace SnmpSampleApp
         internal LogData LogData { get => MainModel.Instance.LogData; }
         public string LogText { get { return MainModel.Instance.LogData.LogText; } }
 
-        //public event PropertyChangedEventHandler? PropertyChanged;
-        //protected void OnPropertyChanged(string propertyName)
-        //{
-        //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        //}
         public ObservableCollection<string> IpAddressList
         {
             get => GetProperty<ObservableCollection<string>>(
@@ -49,22 +44,41 @@ namespace SnmpSampleApp
         }
 
         public ICommand GetSnmpDataCommand { get; }
+        public ICommand GetSnmpWalk { get; }
 
         public MainWindowViewModel()
         {
-            // GetSnmpDataCommandの初期化
             GetSnmpDataCommand = new RelayCommand(ExecuteGetSnmpData);
+            GetSnmpWalk = new RelayCommand(ExecutetWalkSnmp);
         }
 
         private async void ExecuteGetSnmpData(object? parameter)
         {
             try
             {
-                string data = string.Empty;
+                //string data = string.Empty;
                 await Task.Run(() =>
                 {
                     string community = "public"; // コミュニティ名を指定
-                    data = MainModel.GetSnmpData(IpAddress, community, SelectedCommand);
+                    MainModel.GetSnmpData(IpAddress, community, SelectedCommand);
+                    RaisePropertyChanged(nameof(LogText));
+                });
+            }
+            catch (System.Exception ex)
+            {
+                LogData.AddLogEntry(string.Format("Exception: '{0}'", ex.Message));
+                RaisePropertyChanged(nameof(LogText));
+                MessageBox.Show(ex.Message);
+            }
+        }
+        private async void ExecutetWalkSnmp(object? parameter)
+        {
+            try
+            {
+                await Task.Run(() =>
+                {
+                    string community = "public"; // コミュニティ名を指定
+                    MainModel.GetSnmpWalk(IpAddress, community, SelectedCommand);
                     RaisePropertyChanged(nameof(LogText));
                 });
             }
